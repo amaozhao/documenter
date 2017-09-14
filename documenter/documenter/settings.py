@@ -26,7 +26,7 @@ SECRET_KEY = 'qg9p^*l0ln#n(1wi^tw7=nn&c!yn6qq14^p0t4_qn=pk2y_uhi'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 SITE_ID = 1
@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+
+    'corsheaders',
 
     'documenter',
     'mptt',
@@ -59,6 +61,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -159,3 +162,5 @@ REST_FRAMEWORK = {
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
