@@ -116,7 +116,7 @@ class Chapter(BaseModel):
         tutorial_private = self.tutorial.is_private
         if tutorial_private:
             self.is_private = True
-        self.html = markdown.markdown(self.content, markdown_extensions)
+        self.html = markdown.markdown(self.content, markdown_extensions, safe_mode='escape')
         super(Chapter, self).save(*args, **kwargs)
 
 
