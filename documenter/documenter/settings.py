@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 
     'documenter',
     'mptt',
-    'tutorial',
+    'document',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',

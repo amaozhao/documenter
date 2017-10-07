@@ -2,13 +2,13 @@
 
 from rest_framework import generics
 
-from tutorial.models import Tutorial
-from tutorial.serializers import TutorialSerializer, SimpleTutorialSerializer
+from document.models import Project
+from document.serializers import ProjectSerializer, SimpleProjectSerializer
 
 
-class SimpleTutorialListView(generics.ListAPIView):
-    model = Tutorial
-    serializer_class = SimpleTutorialSerializer
+class SimpleProjectListView(generics.ListAPIView):
+    model = Project
+    serializer_class = SimpleProjectSerializer
 
     def get_queryset(self):
         query = self.model.objects
@@ -18,9 +18,9 @@ class SimpleTutorialListView(generics.ListAPIView):
         return query.order_by('-updated')
 
 
-class TutorialListView(generics.ListAPIView):
-    model = Tutorial
-    serializer_class = TutorialSerializer
+class ProjectListView(generics.ListAPIView):
+    model = Project
+    serializer_class = Project
 
     def get_queryset(self):
         topic = self.kwargs.get('topic')
@@ -31,9 +31,9 @@ class TutorialListView(generics.ListAPIView):
         return query.all()
 
 
-class TutorialDetailView(generics.RetrieveAPIView):
-    model = Tutorial
-    serializer_class = TutorialSerializer
+class ProjectDetailView(generics.RetrieveAPIView):
+    model = Project
+    serializer_class = ProjectSerializer
 
     def get_queryset(self):
         return self.model.objects.select_related('author', 'topic')

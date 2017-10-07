@@ -27,5 +27,5 @@ urlpatterns = [
     url(r'^api/rest-auth/registration/', include('rest_auth.registration.urls')),
     url(r'^api/rest-auth/token-refresh/$', refresh_jwt_token),
     url(r'^api/rest-auth/', include('rest_auth.urls')),
-    url(r'^api/topic/', include('tutorial.urls')),
+    url(r'^api/document/', include('document.urls')),
 ]

@@ -2,8 +2,8 @@
 
 from rest_framework import viewsets
 
-from tutorial.models import Topic
-from tutorial.serializers import TopicSerializer
+from document.models import Topic
+from document.serializers import TopicSerializer
 
 
 class TopicViewSet(viewsets.ModelViewSet):

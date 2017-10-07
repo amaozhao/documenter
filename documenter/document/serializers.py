@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth import get_user_model
 from django.utils.text import Truncator
-from tutorial.models import Topic, Tutorial, Chapter, Train, Answer
+from document.models import Topic, Project, Chapter
 from rest_framework import serializers
 from utils.custom_serializers import DateTimeField
 
@@ -43,21 +43,21 @@ class TopicSerializer(SimpleTopicSerializer):
         return super(TopicSerializer, self).create(validated_data)
 
 
-class SimpleTutorialSerializer(serializers.ModelSerializer):
+class SimpleProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Tutorial
+        model = Project
         fields = ('id', 'title', 'content')
 
 
-class TutorialSerializer(SimpleTutorialSerializer):
+class ProjectSerializer(SimpleProjectSerializer):
     topic = SimpleTopicSerializer(read_only=True)
     author = UserSerializer(read_only=True)
     created = DateTimeField()
     updated = DateTimeField()
 
     class Meta:
-        model = Tutorial
+        model = Project
         fields = (
             'id', 'title', 'content',
             'topic',
@@ -67,7 +67,7 @@ class TutorialSerializer(SimpleTutorialSerializer):
 
 
 class SimpleChaperSerializer(serializers.ModelSerializer):
-    tutorial = SimpleTutorialSerializer(read_only=True)
+    tutorial = SimpleProjectSerializer(read_only=True)
     author = UserSerializer(read_only=True)
     created = DateTimeField()
     updated = DateTimeField()
@@ -94,31 +94,3 @@ class ChaperSerializer(SimpleChaperSerializer):
             'html', 'is_private',
             'tutorial', 'author', 'created', 'updated'
         )
-
-
-class SimpleTrainSerializer(serializers.ModelSerializer):
-    chapter = SimpleChaperSerializer(read_only=True)
-    author = UserSerializer(read_only=True)
-    created = DateTimeField()
-    updated = DateTimeField()
-
-    class Meta:
-        model = Train
-        fields = ('id', 'chapter', 'author', 'html', 'created', 'updated')
-
-
-class TrainSerializer(SimpleTrainSerializer):
-
-    class Meta:
-        model = Train
-        fields = ('id', 'chapter', 'author', 'html', 'created', 'updated')
-
-
-class AnswerSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
-    created = DateTimeField()
-    updated = DateTimeField()
-
-    class Meta:
-        model = Answer
-        fields = ('id', 'html', 'author', 'created', 'updated')

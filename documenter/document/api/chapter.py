@@ -1,8 +1,8 @@
 # coding: utf-8
 
 from rest_framework import generics
-from tutorial.models import Chapter
-from tutorial.serializers import (
+from document.models import Chapter
+from document.serializers import (
     SimpleChaperSerializer,
     ChaperSerializer
 )
@@ -26,5 +26,5 @@ class ChapterDetailView(generics.RetrieveAPIView):
     serializer_class = ChaperSerializer
 
     def get_queryset(self):
-        query = self.model.objects.select_related('author', 'tutorial')
+        query = self.model.objects.select_related('author', 'project')
         return query

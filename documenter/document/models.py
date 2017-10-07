@@ -7,14 +7,12 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 
-from utils.base_models import BaseModel
-
 
 markdown_extensions = ['pymdownx.arithmatex', 'pymdownx.github']
 
 
 @python_2_unicode_compatible
-class Topic(BaseModel, MPTTModel):
+class Topic(MPTTModel):
     title = models.CharField(
         verbose_name=_('title'),
         max_length=100,
@@ -34,6 +32,18 @@ class Topic(BaseModel, MPTTModel):
         verbose_name=_('author'),
         related_name='topics'
     )
+    created = models.DateTimeField(
+        verbose_name=_('created'),
+        auto_now_add=True
+    )
+    updated = models.DateTimeField(
+        verbose_name=_('updated'),
+        auto_now=True
+    )
+    deleted = models.BooleanField(
+        verbose_name=_('deleted'),
+        default=False
+    )
 
     class Meta:
         db_table = 'topic'
@@ -45,7 +55,7 @@ class Topic(BaseModel, MPTTModel):
 
 
 @python_2_unicode_compatible
-class Tutorial(BaseModel):
+class Project(models.Model):
     title = models.CharField(
         verbose_name=_('title'),
         max_length=100,
@@ -55,6 +65,7 @@ class Tutorial(BaseModel):
         verbose_name=_('is private'), default=False)
     topic = models.ForeignKey(
         Topic,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name=_('topic'),
         related_name='tutorials'
@@ -65,13 +76,25 @@ class Tutorial(BaseModel):
         verbose_name=_('author'),
         related_name='tutorials'
     )
+    created = models.DateTimeField(
+        verbose_name=_('created'),
+        auto_now_add=True
+    )
+    updated = models.DateTimeField(
+        verbose_name=_('updated'),
+        auto_now=True
+    )
+    deleted = models.BooleanField(
+        verbose_name=_('deleted'),
+        default=False
+    )
 
     class Meta:
-        db_table = 'tutorial'
-        verbose_name = _('tutorial')
-        verbose_name_plural = _('tutorials')
+        db_table = 'project'
+        verbose_name = _('project')
+        verbose_name_plural = _('projects')
         indexes = [
-            models.Index(fields=['title'], name='idx_title'),
+            models.Index(fields=['title'], name='idx_project_title'),
         ]
 
     def __str__(self):
@@ -79,22 +102,20 @@ class Tutorial(BaseModel):
 
 
 @python_2_unicode_compatible
-class Chapter(BaseModel):
-
+class Chapter(models.Model):
     title = models.CharField(
         verbose_name=_('title'),
-        max_length=100,
-        db_index=True
+        max_length=100
     )
     content = models.TextField(verbose_name=_('content'))
     html = models.TextField(verbose_name=_('html'), editable=False)
     quote = models.TextField(verbose_name=_('quote'))
     is_private = models.BooleanField(
         verbose_name=_('is private'), default=False)
-    tutorial = models.ForeignKey(
-        Tutorial,
+    project = models.ForeignKey(
+        Project,
         on_delete=models.CASCADE,
-        verbose_name=_('tutorial'),
+        verbose_name=_('project'),
         related_name='chapters'
     )
     author = models.ForeignKey(
@@ -104,10 +125,26 @@ class Chapter(BaseModel):
         related_name='chapters'
     )
 
+    created = models.DateTimeField(
+        verbose_name=_('created'),
+        auto_now_add=True
+    )
+    updated = models.DateTimeField(
+        verbose_name=_('updated'),
+        auto_now=True
+    )
+    deleted = models.BooleanField(
+        verbose_name=_('deleted'),
+        default=False
+    )
+
     class Meta:
         db_table = 'chapter'
         verbose_name = _('chapter')
         verbose_name_plural = _('chapters')
+        indexes = [
+            models.Index(fields=['title'], name='idx_chapter_title'),
+        ]
 
     def __str__(self):
         return self.title
@@ -118,79 +155,3 @@ class Chapter(BaseModel):
             self.is_private = True
         self.html = markdown.markdown(self.content, markdown_extensions, safe_mode='escape')
         super(Chapter, self).save(*args, **kwargs)
-
-
-@python_2_unicode_compatible
-class Train(BaseModel):
-    content = models.TextField(_('content'), db_index=True)
-    answer = models.TextField(_('answer'))
-    html = models.TextField(verbose_name=_('html'), editable=False)
-    is_private = models.BooleanField(
-        verbose_name=_('is private'), default=False)
-    chapter = models.ForeignKey(
-        Chapter,
-        on_delete=models.CASCADE,
-        verbose_name=_('chapter'),
-        related_name='trains'
-    )
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name=_('author'),
-        related_name='trains'
-    )
-
-    class Meta:
-        db_table = 'train'
-        verbose_name = _('train')
-        verbose_name_plural = _('trains')
-
-    def __str__(self):
-        if len(self.content) > 10:
-            return self.content[:10] + '...'
-        return self.content
-
-    def save(self, *args, **kwargs):
-        chapter_private = self.chapter.is_private
-        if chapter_private:
-            self.is_private = True
-        self.html = markdown.markdown(self.content, markdown_extensions)
-        super(Train, self).save(*args, **kwargs)
-
-
-@python_2_unicode_compatible
-class Answer(BaseModel):
-    content = models.TextField(_('content'), db_index=True)
-    html = models.TextField(verbose_name=_('html'), editable=False)
-    is_private = models.BooleanField(
-        verbose_name=_('is private'), default=False)
-    train = models.ForeignKey(
-        Train,
-        on_delete=models.CASCADE,
-        verbose_name=_('train'),
-        related_name='answers'
-    )
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name=_('author'),
-        related_name='answers'
-    )
-
-    class Meta:
-        db_table = 'answer'
-        verbose_name = _('answer')
-        verbose_name_plural = _('answers')
-
-    def __str__(self):
-        if len(self.content) > 10:
-            return self.content[:10] + '...'
-        return self.content
-
-    def save(self, *args, **kwargs):
-        train_private = self.train.is_private
-        if train_private:
-            self.is_private = True
-        self.html = markdown.markdown(self.content, markdown_extensions)
-        super(Answer, self).save(*args, **kwargs)
-
