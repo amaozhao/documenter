@@ -5,11 +5,9 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from utils.base_models import BaseModel
-
 
 @python_2_unicode_compatible
-class Organization(BaseModel):
+class Organization(models.Model):
     name = models.CharField(
         verbose_name=_('name'),
         max_length=100,
@@ -21,6 +19,18 @@ class Organization(BaseModel):
         on_delete=models.CASCADE,
         verbose_name=_('author'),
         related_name='organizations'
+    )
+    created = models.DateTimeField(
+        verbose_name=_('created'),
+        auto_now_add=True
+    )
+    updated = models.DateTimeField(
+        verbose_name=_('updated'),
+        auto_now=True
+    )
+    deleted = models.BooleanField(
+        verbose_name=_('deleted'),
+        default=False
     )
 
     class Meta:
