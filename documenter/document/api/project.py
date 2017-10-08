@@ -20,7 +20,7 @@ class SimpleProjectListView(generics.ListAPIView):
 
 class ProjectListView(generics.ListAPIView):
     model = Project
-    serializer_class = Project
+    serializer_class = ProjectSerializer
 
     def get_queryset(self):
         topic = self.kwargs.get('topic')

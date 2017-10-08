@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'document',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_jwt',
     'rest_auth',
     'allauth',
     'allauth.account',
